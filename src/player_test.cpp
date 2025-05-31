@@ -2,6 +2,53 @@
 #include <new>
 #include <string>
 
+/*
+
+static int create_class(lua_State *L)
+{
+    int x = luaL_checkinteger(L, 1);
+    void *ptr = lua_newuserdata(L, sizeof(MyClass));
+    new (ptr) MyClass(x);
+    luaL_getmetatable(L, "MyClassMetatable");
+    lua_setmetatable(L, -2);
+    return 1;
+}
+
+static int MyClassFunction_MyClassFunction(lua_State *L)
+{
+    MyClass *obj = (MyClass *)luaL_checkudata(L, 1, "MyClassMetatable");
+    lua_pushinteger(L, obj->MyClassFunction());
+    return 1;
+}
+
+static int destroy_class(lua_State *L)
+{
+    MyClass *obj = (MyClass *)luaL_checkudata(L, 1, "MyClassMetatable");
+    obj->~MyClass();
+    return 0;
+}
+
+static const luaL_Reg lua_functions[] = {
+    {"MyClassFunction", MyClassFunction_MyClassFunction},
+    {NULL, NULL}};
+
+void registrar_classe(lua_State *L)
+{
+    luaL_newmetatable(L, "MyClassMetatable");
+    lua_pushcfunction(L, destroy_class);
+    lua_setfield(L, -2, "__gc");
+    luaL_setfuncs(L, lua_functions, 0);
+    lua_pop(L, 1);
+
+    lua_newtable(L);
+    lua_newtable(L);
+    lua_pushcfunction(L, create_class);
+    lua_setfield(L, -2, "__call");
+    lua_setmetatable(L, -2);
+    lua_setglobal(L, "MyClass");
+}
+*/
+
 class Vec2
 {
 public:
@@ -45,58 +92,13 @@ void register_Player(lua_State *L){
 }
 
 
-/*
-
-static int create_class(lua_State *L)
-{
-    int x = luaL_checkinteger(L, 1);
-    void *ptr = lua_newuserdata(L, sizeof(MyClass));
-    new (ptr) MyClass(x);
-    luaL_getmetatable(L, "MyClassMetatable");
-    lua_setmetatable(L, -2);
-    return 1;
-}
-
-static int MyClassFunction_MyClassFunction(lua_State *L)
-{
-    MyClass *obj = (MyClass *)luaL_checkudata(L, 1, "MyClassMetatable");
-    lua_pushinteger(L, obj->MyClassFunction());
-    return 1;
-}
-
-static int destroy_class(lua_State *L)
-{
-    MyClass *obj = (MyClass *)luaL_checkudata(L, 1, "MyClassMetatable");
-    obj->~MyClass();
-    return 0;
-}
-
-static const luaL_Reg lua_functions[] = {
-    {"MyClassFunction", MyClassFunction_MyClassFunction},
-    {NULL, NULL}};
-
-void registrar_classe(lua_State *L)
-{
-    luaL_newmetatable(L, "MyClassMetatable");
-    lua_pushcfunction(L, destroy_class);
-    lua_setfield(L, -2, "__gc");
-    lua_pushvalue(L, -1);
-    lua_setfield(L, -2, "__index");
-    luaL_setfuncs(L, lua_functions, 0);
-    lua_pop(L, 1);
-
-    lua_pushcfunction(L, create_class);
-    lua_setglobal(L, "MyClass");
-}
-*/
 
 
 
 
 
-static const luaL_Reg lua_functions[] = {
-    {NULL, NULL}
-};
+
+
 
 void register_classes(lua_State *L){
     register_Vec2(L);

@@ -57,8 +57,6 @@ void registrar_classe(lua_State *L)
     luaL_newmetatable(L, "MyClassMetatable");
     lua_pushcfunction(L, destroy_class);
     lua_setfield(L, -2, "__gc");
-    lua_pushvalue(L, -1);
-    lua_setfield(L, -2, "__index");
     luaL_setfuncs(L, lua_functions, 0);
     lua_pop(L, 1);
 

@@ -14,6 +14,10 @@ public:
         this->y = y;
     }
 
+    Vec2 operator+(Vec2 const& obj){
+        return Vec2(x+obj.x,obj.y+obj.y);
+    }
+
     void print(){
         printf("{ %f , %f }\n",x,y);
     }
@@ -22,10 +26,10 @@ public:
 };
 static int new_Vec2(lua_State *L)
 {
-    if (lua_gettop(L) == 2)
+    if (lua_gettop(L) == 3)
     {
-        int x = luaL_checknumber(L, 1);
-        int y = luaL_checknumber(L, 2);
+        int x = luaL_checknumber(L, 2);
+        int y = luaL_checknumber(L, 3);
         void *ptr = lua_newuserdata(L, sizeof(Vec2));
         new (ptr) Vec2(x, y);
         luaL_getmetatable(L, "Vec2");
@@ -38,7 +42,8 @@ static int new_Vec2(lua_State *L)
     lua_setmetatable(L, -2);
     return 1;
 }
-static int destroy_Vec2(lua_State *L)
+
+static int delete_Vec2(lua_State *L)
 {
     Vec2 *obj = (Vec2 *)luaL_checkudata(L, 1, "Vec2");
     obj->~Vec2();
@@ -81,6 +86,18 @@ static int vec2_newindex(lua_State* L) {
     return 0;
 }
 
+static int Vec2_add(lua_State *L)
+{
+    Vec2 *obj1 = (Vec2 *)luaL_checkudata(L, 1, "Vec2");
+    Vec2 *obj2 = (Vec2 *)luaL_checkudata(L, 2, "Vec2");
+
+    void *ptr = lua_newuserdata(L, sizeof(Vec2));
+    new (ptr) Vec2(*obj1 + *obj2);
+    luaL_getmetatable(L, "Vec2");
+    lua_setmetatable(L, -2);
+    return 1;
+}
+
 static int vec2_print(lua_State* L){
     Vec2* obj = (Vec2*)luaL_checkudata(L, 1, "Vec2");
     obj->print();
@@ -95,12 +112,14 @@ static const luaL_Reg vec2_methods[] = {
 void register_Vec2(lua_State *L)
 {
     luaL_newmetatable(L, "Vec2");
-    lua_pushcfunction(L, destroy_Vec2);
+    lua_pushcfunction(L, delete_Vec2);
     lua_setfield(L, -2, "__gc");
     lua_pushcfunction(L, vec2_index);
     lua_setfield(L, -2, "__index");
     lua_pushcfunction(L, vec2_newindex);
     lua_setfield(L, -2, "__newindex");
+    lua_pushcfunction(L, Vec2_add);
+    lua_setfield(L, -2, "__add");
     luaL_setfuncs(L, vec2_methods, 0);
     lua_pop(L, 1);
 
@@ -152,7 +171,9 @@ int main()
         "local v2 = Vec2()\n"
         "v2.x = 2\n"
         "v2.y = 4\n"
-        "print(v2.x + v2.y)\n"
+        "v2:print()\n"
+
+        "v2 = v2 + Vec2(20,40)\n"
         "v2:print()\n"
 
         /*
